@@ -13,6 +13,7 @@ async def read_root():
 
 @app.post("/predict")
 async def predict(
+    format: str = Query(..., description="Format"),
     date_from: str = Query(..., description="Start date (YYYY-MM-DD)"),
     date_to: str = Query(..., description="End date (YYYY-MM-DD)"),
     period: int = Query(..., description="Period"),
@@ -22,6 +23,7 @@ async def predict(
 ):
     # Todo implement classify the model and use that mode to train , pred value to return
     prediction_info = {
+        "format":format,
         "date_from": date_from,
         "date_to": date_to,
         "period": period,
