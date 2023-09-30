@@ -39,14 +39,9 @@ if st.button("Make API Call"):
                 format, date_from, date_to, period
             )
 
-            response = requests.post(API_ENDPOINT, json=payload).json().get("message")
-            result = {
-                "model" : "ARIMA",
-                "mape" : 0.123,
-                "results" : response.get("data" , [])
-            }
+            response = requests.post(API_ENDPOINT, json=payload).json()
             st.subheader("API Response:")
-            st.json(result)
+            st.json(response)
         except Exception as e:
             st.error(f"An error occurred: {str(e)}")
     else:
