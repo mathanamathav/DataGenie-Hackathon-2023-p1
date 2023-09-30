@@ -6,7 +6,7 @@ The goal is to create an efficient time series model selection algorithm
 ## ToDO checkpoints
 
 - [ ] Classification Algorithm
-    - [ ] (Data Generation) Pick/generate the necessary features and label the data required for classification
+    - [X] (Data Generation) Pick/generate the necessary features and label the data required for classification
     - [ ] Train Classification Model with (5 output labels) and pickle\store the model.
 - [ ] Generate predictions  
 - [ ] REST API
