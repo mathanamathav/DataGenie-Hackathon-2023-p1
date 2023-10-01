@@ -122,7 +122,6 @@ async def predict(
             residual_mean = result.resid.mean()
             model_input.append(residual_mean)
 
-            print(model_input)
             forecast_dates = pd.date_range(
                 start=pd.to_datetime(date_to) + pd.DateOffset(1),
                 periods=period,
@@ -156,7 +155,6 @@ async def predict(
                 closed="left",
                 freq="H",
             )[1:]
-            print(model_input)
             with open("models/RandomForest0.25hourly7.pkl", "rb") as model_file:
                 model = pickle.load(model_file)
 
@@ -179,7 +177,6 @@ async def predict(
             trend_mean = result.trend.mean()
             model_input.append(trend_mean)
 
-            print(model_input)
             forecast_dates = pd.date_range(
                 start=pd.to_datetime(date_to) + pd.DateOffset(1),
                 periods=period,
@@ -192,6 +189,7 @@ async def predict(
         y_pred, mape = predict_values(model_to_predict, sample_df, period, date_to)
         dates, true_y = sample_df["date"].tolist(), sample_df["value"].tolist()
         dates.extend(forecast_dates)
+        print(dates)
 
         best_model = check_all_models(sample_df, period, date_to)
         logging.info("{} - {}".format(model_to_predict, best_model))

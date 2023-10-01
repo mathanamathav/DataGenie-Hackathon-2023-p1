@@ -1,6 +1,10 @@
 import streamlit as st
 import json
 import requests
+from utils import plot_grapgh
+import plotly.io as pio
+
+pio.templates.default = "plotly"
 
 st.set_page_config(page_title="DataGenie Hackathon 2023", page_icon="🌐", layout="wide")
 
@@ -22,7 +26,10 @@ st.markdown(
 
 st.title("API CALL📞")
 
-format = st.text_input("Format")
+format = st.selectbox(
+    "Format",
+    ("daily", "monthly", "hourly", "weekly"),
+)
 date_from = st.date_input("Start Date")
 date_to = st.date_input("End Date")
 period = st.number_input("Period", min_value=0, step=1)
@@ -40,6 +47,8 @@ if st.button("Make API Call"):
             )
 
             response = requests.post(API_ENDPOINT, json=payload).json()
+
+            st.plotly_chart(plot_grapgh(response), use_container_width=True)
             st.subheader("API Response:")
             st.json(response)
         except Exception as e:
