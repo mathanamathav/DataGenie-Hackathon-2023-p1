@@ -1,0 +1,18 @@
+[
+  {
+    "point_timestamp": "2021-08-01T10:00:00",
+    "point_value": 124.5
+  },
+  {
+    "point_timestamp": "2021-08-01T11:00:00",
+    "point_value": 194.73
+  },
+  {
+    "point_timestamp": "2021-08-01T12:00:00",
+    "point_value": 173.4
+  },
+  {
+    "point_timestamp": "2021-08-01T13:00:00",
+    "point_value": 124.5
+  }
+]

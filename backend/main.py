@@ -49,48 +49,139 @@ async def predict(
         sample_df.sort_index(inplace=True)
         sample_df.rename_axis("index", inplace=True)
 
-        mean = sample_df["value"].mean()
-        variance = sample_df["value"].var()
-        skewness = skew(sample_df["value"])
-        kurt = kurtosis(sample_df["value"])
+        model_input = []
 
-        try:
-            result = seasonal_decompose(
-                sample_df["value"], model="additive", extrapolate_trend="freq"
-            )
-        except:
-            result = seasonal_decompose(
-                sample_df["value"], model="additive", extrapolate_trend="freq", period=1
-            )
-        trend_mean = result.trend.mean()
-        seasonal_mean = result.seasonal.mean()
-        residual_mean = result.resid.mean()
-        model_input = [
-            mean,
-            variance,
-            skewness,
-            kurt,
-            trend_mean,
-            seasonal_mean,
-            residual_mean,
-        ]
+        mean = sample_df["value"].mean()
+        model_input.append(mean)
+
+        variance = sample_df["value"].var()
+        model_input.append(variance)
 
     if format:
         if format == "daily":
+            kurt = kurtosis(sample_df["value"])
+            model_input.append(kurt)
+
+            try:
+                result = seasonal_decompose(
+                    sample_df["value"], model="additive", extrapolate_trend="freq"
+                )
+            except:
+                result = seasonal_decompose(
+                    sample_df["value"],
+                    model="additive",
+                    extrapolate_trend="freq",
+                    period=1,
+                )
+
+            trend_mean = result.trend.mean()
+            model_input.append(trend_mean)
+
+            seasonal_mean = result.seasonal.mean()
+            model_input.append(seasonal_mean)
+
+            residual_mean = result.resid.mean()
+            model_input.append(residual_mean)
+
+            print(model_input)
             forecast_dates = pd.date_range(
                 start=pd.to_datetime(date_to) + pd.DateOffset(1),
                 periods=period,
                 freq="D",
             )
-            with open("models/daily-rf.pkl", "rb") as model_file:
+            with open("models/RandomForest0.6daily7.pkl", "rb") as model_file:
                 model = pickle.load(model_file)
 
         elif format == "monthly":
-            pass
+            kurt = kurtosis(sample_df["value"])
+            model_input.append(kurt)
+
+            try:
+                result = seasonal_decompose(
+                    sample_df["value"], model="additive", extrapolate_trend="freq"
+                )
+            except:
+                result = seasonal_decompose(
+                    sample_df["value"],
+                    model="additive",
+                    extrapolate_trend="freq",
+                    period=1,
+                )
+
+            trend_mean = result.trend.mean()
+            model_input.append(trend_mean)
+
+            seasonal_mean = result.seasonal.mean()
+            model_input.append(seasonal_mean)
+
+            residual_mean = result.resid.mean()
+            model_input.append(residual_mean)
+
+            print(model_input)
+            forecast_dates = pd.date_range(
+                start=pd.to_datetime(date_to) + pd.DateOffset(1),
+                periods=period,
+                freq="M",
+            )
+            with open("models/RandomForest0.35monthly7.pkl", "rb") as model_file:
+                model = pickle.load(model_file)
+
         elif format == "hourly":
-            pass
+            try:
+                result = seasonal_decompose(
+                    sample_df["value"], model="additive", extrapolate_trend="freq"
+                )
+            except:
+                result = seasonal_decompose(
+                    sample_df["value"],
+                    model="additive",
+                    extrapolate_trend="freq",
+                    period=1,
+                )
+
+            seasonal_mean = result.seasonal.mean()
+            model_input.append(seasonal_mean)
+
+            residual_mean = result.resid.mean()
+            model_input.append(residual_mean)
+
+            forecast_dates = pd.date_range(
+                start=sample_df["date"][-1],
+                periods=period + 1,
+                closed="left",
+                freq="H",
+            )[1:]
+            print(model_input)
+            with open("models/RandomForest0.25hourly7.pkl", "rb") as model_file:
+                model = pickle.load(model_file)
+
         elif format == "weekly":
-            pass
+            kurt = kurtosis(sample_df["value"])
+            model_input.append(kurt)
+
+            try:
+                result = seasonal_decompose(
+                    sample_df["value"], model="additive", extrapolate_trend="freq"
+                )
+            except:
+                result = seasonal_decompose(
+                    sample_df["value"],
+                    model="additive",
+                    extrapolate_trend="freq",
+                    period=1,
+                )
+
+            trend_mean = result.trend.mean()
+            model_input.append(trend_mean)
+
+            print(model_input)
+            forecast_dates = pd.date_range(
+                start=pd.to_datetime(date_to) + pd.DateOffset(1),
+                periods=period,
+                freq="W",
+            )
+            with open("models/RandomForest0.75weekly7.pkl", "rb") as model_file:
+                model = pickle.load(model_file)
 
         model_to_predict = method_to_predict[model.predict([model_input])[0]]
         y_pred, mape = predict_values(model_to_predict, sample_df, period, date_to)
@@ -98,7 +189,7 @@ async def predict(
         dates.extend(forecast_dates)
 
         best_model = check_all_models(sample_df, period, date_to)
-        logging.info("{} - {}".format(model_to_predict , best_model))
+        logging.info("{} - {}".format(model_to_predict, best_model))
 
         res = []
         for i in range(len(y_pred)):
