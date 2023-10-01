@@ -44,6 +44,23 @@ def predict_values(model, df, forecast_period=0, pred_start=None):
         return forecast_prophet(df, forecast_period)
 
 
+def check_all_models(df, forecast_period=0, pred_start=None):
+    y_pred_prophet, mape_prophet = forecast_prophet(df, forecast_period)
+    y_pred_arima, mape_auto_arima = forecast_autoarima(df, forecast_period)
+    y_pred_ets, mape_ets = forecast_ets(df, forecast_period)
+    y_pred_xgboost, mape_xgboost = forecast_xgboost(df, forecast_period, pred_start)
+
+    res = [
+        ("Prophet", mape_prophet),
+        ("ARIMA", mape_auto_arima),
+        ("ETS", mape_ets),
+        ("XGBoost", mape_xgboost),
+    ]
+
+    best_model = min(res, key=lambda x: x[1])[0]
+    return best_model , res
+
+
 def forecast_greykite(df, freq="D", forecast=False, forecast_period=100):
     metadata = MetadataParam(
         time_col="date",

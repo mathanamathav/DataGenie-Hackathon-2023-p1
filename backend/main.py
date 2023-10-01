@@ -3,7 +3,7 @@ import uvicorn
 from models import PredictionRequest
 from typing import List
 from constants import method_to_predict
-from utils import predict_values
+from utils import predict_values, check_all_models
 import pandas as pd
 from scipy.stats import skew, kurtosis
 from statsmodels.tsa.seasonal import seasonal_decompose
@@ -12,7 +12,7 @@ import warnings
 import logging
 
 logging.getLogger("prophet").setLevel(logging.WARNING)
-logging.getLogger("cmdstanpy").disabled=True
+logging.getLogger("cmdstanpy").disabled = True
 warnings.filterwarnings("ignore")
 
 app = FastAPI()
@@ -54,9 +54,14 @@ async def predict(
         skewness = skew(sample_df["value"])
         kurt = kurtosis(sample_df["value"])
 
-        result = seasonal_decompose(
-            sample_df["value"], model="additive", extrapolate_trend="freq", period=1
-        )
+        try:
+            result = seasonal_decompose(
+                sample_df["value"], model="additive", extrapolate_trend="freq"
+            )
+        except:
+            result = seasonal_decompose(
+                sample_df["value"], model="additive", extrapolate_trend="freq", period=1
+            )
         trend_mean = result.trend.mean()
         seasonal_mean = result.seasonal.mean()
         residual_mean = result.resid.mean()
@@ -73,7 +78,9 @@ async def predict(
     if format:
         if format == "daily":
             forecast_dates = pd.date_range(
-                start=pd.to_datetime(date_to) + pd.DateOffset(1), periods=period, freq="D"
+                start=pd.to_datetime(date_to) + pd.DateOffset(1),
+                periods=period,
+                freq="D",
             )
             with open("models/daily-rf.pkl", "rb") as model_file:
                 model = pickle.load(model_file)
@@ -90,6 +97,9 @@ async def predict(
         dates, true_y = sample_df["date"].tolist(), sample_df["value"].tolist()
         dates.extend(forecast_dates)
 
+        best_model = check_all_models(sample_df, period, date_to)
+        logging.info("{} - {}".format(model_to_predict , best_model))
+
         res = []
         for i in range(len(y_pred)):
             if true_y:
@@ -97,14 +107,14 @@ async def predict(
                     {
                         "point_timestamp": dates.pop(0),
                         "point_value": true_y.pop(0),
-                        "yhat": round(y_pred.pop(0) ,4),
+                        "yhat": round(y_pred.pop(0), 4),
                     }
                 )
             else:
                 res.append(
                     {
                         "point_timestamp": dates.pop(0),
-                        "yhat": round(y_pred.pop(0) ,4),
+                        "yhat": round(y_pred.pop(0), 4),
                     }
                 )
 
