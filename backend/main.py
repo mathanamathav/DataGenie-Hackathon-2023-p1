@@ -17,7 +17,6 @@ warnings.filterwarnings("ignore")
 
 app = FastAPI()
 
-
 @app.get("/")
 async def read_root():
     return {"message": "Hello, FastAPI!"}
@@ -33,7 +32,9 @@ async def predict(
         ..., description="Data points for prediction"
     ),
 ):
-    # Todo implement classify the model and use that mode to train , pred value to return
+    if period and period < 0:
+        return { "message" : "forecast number cannot be negative ,It has to be 0 or grater"}
+    
     if request_data:
         data = [
             {"point_timestamp": val.point_timestamp, "point_value": val.point_value}
@@ -56,6 +57,10 @@ async def predict(
 
         variance = sample_df["value"].var()
         model_input.append(variance)
+
+        if pd.to_datetime(date_from).date() != sample_df["date"][0].date() or pd.to_datetime(date_to).date() != sample_df["date"][-1].date():
+            return { "message" : "Date mentioned in the parameters and payload is not matching!"}
+
 
     if format:
         if format == "daily":
