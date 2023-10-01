@@ -24,6 +24,63 @@ logging.getLogger("prophet").setLevel(logging.WARNING)
 logging.getLogger("cmdstanpy").disabled = True
 warnings.filterwarnings("ignore")
 
+def process_data(sample_df, format, date_from, date_to):
+    model_input = []
+
+    mean = sample_df["value"].mean()
+    model_input.append(mean)
+
+    variance = sample_df["value"].var()
+    model_input.append(variance)
+
+    if (
+        pd.to_datetime(date_from).date() != sample_df["date"][0].date()
+        or pd.to_datetime(date_to).date() != sample_df["date"][-1].date()
+    ):
+        return (
+            None,
+            {
+                "message": "Date mentioned in the parameters and payload is not matching!"
+            },
+        )
+
+    try:
+        result = seasonal_decompose(
+            sample_df["value"], model="additive", extrapolate_trend="freq"
+        )
+    except:
+        result = seasonal_decompose(
+            sample_df["value"],
+            model="additive",
+            extrapolate_trend="freq",
+            period=1,
+        )
+
+    if format == "hourly":
+        seasonal_mean = result.seasonal.mean()
+        model_input.append(seasonal_mean)
+
+        residual_mean = result.resid.mean()
+        model_input.append(residual_mean)
+
+    if format == "daily" or format == "monthly" or format == "weekly":
+        kurt = kurtosis(sample_df["value"])
+        model_input.append(kurt)
+
+        if format == "weekly":
+            trend_mean = result.trend.mean()
+            model_input.append(trend_mean)
+        else:
+            trend_mean = result.trend.mean()
+            model_input.append(trend_mean)
+
+            seasonal_mean = result.seasonal.mean()
+            model_input.append(seasonal_mean)
+
+            residual_mean = result.resid.mean()
+            model_input.append(residual_mean)
+
+    return model_input, None
 
 def calculate_mape(true_values, predicted_values):
     epsilon = 1e-10
