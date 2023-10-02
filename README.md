@@ -3,11 +3,11 @@
 
 The goal is to create an efficient time series model selection algorithm
 
-## Application demo
+## Application demo SF:
 
 ![CPT2310021655-2112x720](https://github.com/mathanamathav/DataGenie-Hackathon-2023-p1/assets/62739618/80d97cc7-f934-45aa-914d-04117183993e)
 
-## ToDO checkpoints
+## ToDO checkpoints:
 
 - [X] Classification Algorithm
     - [X] (Data Generation) Pick/generate the necessary features and label the data required for classification
@@ -27,9 +27,9 @@ The goal is to create an efficient time series model selection algorithm
 - ETS
 - XGBoost
 
-## Approach Notes
+## Approach Notes:
 
-The full documentation explaining how the classifier is built can be found in this link. 
+The full documentation explaining how the classifier is built can be found in this [link](https://drive.google.com/file/d/18RKxMSZlZ_Ho0fl40jqsyA40i6rpOqRV/view?usp=sharing) and video [demo](https://drive.google.com/drive/folders/1-ZxxzDXIlqbSFfMh5ayxL33L3qpQgNOV?usp=sharing).
 This is a condensed version of the PDF
 
 Step 1: Data Generation and Classifier Model Training
@@ -68,13 +68,13 @@ Step 2: Backend API and Frontend
     Three pages - two for Postman-like interface, one for user-friendly CSV upload.
     Provides charts and predicted values based on forecasting periods.
 
-## PLAN
+## PLAN:
 
 ![plot](Photos/RF_Classifer_Model.png)
 ![plot](Photos/simplified-overview.png)
 ![plot](Photos/overall.png)
 
-## Getting Started
+## Getting Started:
 
 Clone the repo in local and follow these steps.
 
