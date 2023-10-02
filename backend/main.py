@@ -6,6 +6,7 @@ from constants import method_to_predict
 from utils import predict_values, check_all_models, process_data
 from scipy.stats import skew, kurtosis
 from statsmodels.tsa.seasonal import seasonal_decompose
+from sklearn.metrics import mean_absolute_percentage_error
 import pandas as pd
 import pickle
 import warnings
@@ -32,6 +33,17 @@ async def predict(
         ..., description="Data points for prediction"
     ),
 ):
+    """_summary_
+
+    Args:
+        date_from (str, optional): _description_. Defaults to Query(..., description="Start date (YYYY-MM-DD)").
+        date_to (str, optional): _description_. Defaults to Query(..., description="End date (YYYY-MM-DD)").
+        period (int, optional): _description_. Defaults to Query(..., description="Period").
+        request_data (List[PredictionRequest], optional): _description_. Defaults to Body( ..., description="Data points for prediction" ).
+
+    Returns:
+        response : _description_ { "model" : "" , "mape" : 0 , "result" : [ date , value , predicted value ]}
+    """
     if period and period < 0:
         return {
             "message": "forecast number cannot be negative, It has to be 0 or greater"
@@ -94,6 +106,9 @@ async def predict(
     dates, true_y = sample_df["date"].tolist(), sample_df["value"].tolist()
     best_model = check_all_models(sample_df, period, date_to)
 
+    model_to_predict = method_to_predict[model.predict([model_input])[0]]
+    y_pred, mape = predict_values(model_to_predict, sample_df, period, date_to)
+
     sample_df["timedelta"] = sample_df["date"] - sample_df["date"].shift(1)
     mode_timedelta = sample_df["timedelta"].value_counts().idxmax()
     last_date = sample_df["date"].max()
@@ -103,8 +118,7 @@ async def predict(
     ).tolist()
     dates.extend(forecast_dates)
 
-    model_to_predict = method_to_predict[model.predict([model_input])[0]]
-    y_pred, mape = predict_values(model_to_predict, sample_df, period, date_to)
+    logging.info(mean_absolute_percentage_error(y_pred[: len(true_y)], true_y))
 
     logging.info("{} - {}".format(model_to_predict, best_model))
 
@@ -132,7 +146,7 @@ async def predict(
 
 
 @app.post("/predict_with_format")
-async def predict(
+async def predict_with_format(
     format: str = Query(..., description="Format"),
     date_from: str = Query(..., description="Start date (YYYY-MM-DD)"),
     date_to: str = Query(..., description="End date (YYYY-MM-DD)"),
@@ -141,6 +155,18 @@ async def predict(
         ..., description="Data points for prediction"
     ),
 ):
+    """_summary_
+
+    Args:
+        format (str, optional): _description_. Defaults to Query(..., description="Format").
+        date_from (str, optional): _description_. Defaults to Query(..., description="Start date (YYYY-MM-DD)").
+        date_to (str, optional): _description_. Defaults to Query(..., description="End date (YYYY-MM-DD)").
+        period (int, optional): _description_. Defaults to Query(..., description="Period").
+        request_data (List[PredictionRequest], optional): _description_. Defaults to Body( ..., description="Data points for prediction" ).
+
+    Returns:
+        response : _description_ { "model" : "" , "mape" : 0 , "result" : [ date , value , predicted value ]}
+    """
     if period and period < 0:
         return {
             "message": "forecast number cannot be negative, It has to be 0 or greater"

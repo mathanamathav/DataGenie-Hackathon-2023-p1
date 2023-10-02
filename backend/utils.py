@@ -65,7 +65,7 @@ def process_data(sample_df, format, date_from, date_to):
         model_input.append(residual_mean)
 
     if format == "daily" or format == "monthly" or format == "weekly":
-        kurt = kurtosis(sample_df["value"])
+        kurt =  kurtosis(sample_df["value"])
         model_input.append(kurt)
 
         if format == "weekly":

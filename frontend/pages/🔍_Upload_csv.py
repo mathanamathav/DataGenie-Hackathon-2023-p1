@@ -73,14 +73,13 @@ if st.button("Do the Magic"):
                 csv_data.columns = ["date", "value"]
 
                 csv_data["date"] = pd.to_datetime(csv_data["date"])
-                csv_data["date"] = csv_data["date"].dt.strftime("%d-%m-%Y")
 
                 csv_data.set_index(csv_data["date"], inplace=True)
                 csv_data.sort_index(inplace=True)
                 csv_data.rename_axis("index", inplace=True)
 
-                date_from = csv_data["date"][0]
-                date_to = csv_data["date"][-1]
+                date_from = csv_data["date"][0].date()
+                date_to = csv_data["date"][-1].date()
 
                 csv_data["date"] = csv_data["date"].astype(str)
                 csv_data.columns = ["point_timestamp", "point_value"]
