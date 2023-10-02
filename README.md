@@ -27,6 +27,10 @@ The goal is to create an efficient time series model selection algorithm
 - ETS
 - XGBoost
 
+## Deployment
+
+Since I used Streamlit for the UI, the repository needs to be public in order to deploy and use the app. However, since it's private, I have not been able to deploy the app.
+
 ## Approach Notes:
 
 The full documentation explaining how the classifier is built can be found in this [link](https://drive.google.com/file/d/18RKxMSZlZ_Ho0fl40jqsyA40i6rpOqRV/view?usp=sharing) and video [demo](https://drive.google.com/drive/folders/1-ZxxzDXIlqbSFfMh5ayxL33L3qpQgNOV?usp=sharing).
