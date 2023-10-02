@@ -43,22 +43,14 @@ def check_csv_format(dataframe, filename):
     #     st.warning("The CSV file should contain columns named 'date' and 'time'.")
     #     return False
 
-    if not (
-        "daily" not in filename
-        or "weekly" not in filename
-        or "monthly" not in filename
-        or "hourly" not in filename
-    ):
-        st.warning(
-            "The file name should adhere to the format daily, hourly, weekly, monthly"
-        )
-        return False
     return True
 
 
-def make_api_call(format, date_from, date_to, period, payload):
-    API_ENDPOINT = "http://127.0.0.1:8105/predict?format={}&date_from={}&date_to={}&period={}".format(
-        format, date_from, date_to, period
+def make_api_call(date_from, date_to, period, payload):
+    API_ENDPOINT = (
+        "http://127.0.0.1:8105/predict?date_from={}&date_to={}&period={}".format(
+            date_from, date_to, period
+        )
     )
 
     try:
@@ -94,7 +86,6 @@ if st.button("Do the Magic"):
                 csv_data.columns = ["point_timestamp", "point_value"]
 
                 api_response = make_api_call(
-                    format="monthly",
                     date_from=date_from,
                     date_to=date_to,
                     period=Period,

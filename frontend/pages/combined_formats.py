@@ -26,24 +26,20 @@ st.markdown(
 
 st.title("API CALL📞")
 
-format = st.selectbox(
-    "Format",
-    ("daily", "monthly", "hourly", "weekly"),
-)
 date_from = st.date_input("Start Date")
 date_to = st.date_input("End Date")
 period = st.number_input("Period", min_value=0, step=1)
 json_file = st.file_uploader("Upload JSON File", type=["json"])
 
 if st.button("Make API Call"):
-    if format and date_from and date_to and json_file:
+    if date_from and date_to and json_file:
         try:
             json_content_bytes = json_file.read()
             json_content_str = json_content_bytes.decode("utf-8")
             payload = json.loads(json_content_str)
 
-            API_ENDPOINT = "http://127.0.0.1:8105/predict_with_format?format={}&date_from={}&date_to={}&period={}".format(
-                format, date_from, date_to, period
+            API_ENDPOINT = "http://127.0.0.1:8105/predict?date_from={}&date_to={}&period={}".format(
+                date_from, date_to, period
             )
 
             response = requests.post(API_ENDPOINT, json=payload).json()

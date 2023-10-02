@@ -24,6 +24,7 @@ logging.getLogger("prophet").setLevel(logging.WARNING)
 logging.getLogger("cmdstanpy").disabled = True
 warnings.filterwarnings("ignore")
 
+
 def process_data(sample_df, format, date_from, date_to):
     model_input = []
 
@@ -82,6 +83,7 @@ def process_data(sample_df, format, date_from, date_to):
 
     return model_input, None
 
+
 def calculate_mape(true_values, predicted_values):
     epsilon = 1e-10
     abs_percentage_error = np.abs(
@@ -115,7 +117,7 @@ def check_all_models(df, forecast_period=0, pred_start=None):
     ]
 
     best_model = min(res, key=lambda x: x[1])[0]
-    return best_model , res
+    return best_model, res
 
 
 def forecast_greykite(df, freq="D", forecast=False, forecast_period=100):
