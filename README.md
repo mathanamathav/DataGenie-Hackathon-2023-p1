@@ -68,8 +68,9 @@ Step 2: Backend API and Frontend
     Three pages - two for Postman-like interface, one for user-friendly CSV upload.
     Provides charts and predicted values based on forecasting periods.
 
-## PLAN(not fully implemented)
+## PLAN
 
+![plot](Photos/RF_Classifer_Model.png)
 ![plot](Photos/simplified-overview.png)
 ![plot](Photos/overall.png)
 
