@@ -3,6 +3,10 @@
 
 The goal is to create an efficient time series model selection algorithm
 
+## Application demo
+
+![CPT2310021655-2112x720](https://github.com/mathanamathav/DataGenie-Hackathon-2023-p1/assets/62739618/80d97cc7-f934-45aa-914d-04117183993e)
+
 ## ToDO checkpoints
 
 - [X] Classification Algorithm
