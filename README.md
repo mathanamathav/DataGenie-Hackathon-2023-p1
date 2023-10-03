@@ -29,7 +29,7 @@ The goal is to create an efficient time series model selection algorithm
 
 ## Deployment
 
-Since I used Streamlit for the UI, the repository needs to be public in order to deploy and use the app. However, since it's private, I have not been able to deploy the app.
+Since I used Streamlit for the UI, the frontend is being [deployed](https://dg2023hackathon.streamlit.app/), but the backend API is not deployed, which means we cannot use the deployed version.
 
 ## Approach Notes:
 
